@@ -60,9 +60,9 @@ build_stratagus() {
 	echo "${PURPLE}Building Stratagus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/stratagus
 	cd stratagus
-	mkdir build && cd build
-	cmake .. -DBUILD_VENDORED_LUA=ON && make	# If there is an issue with libs: -DBUILD_VENDORED_MEDIA_LIBS=ON
-	cd ../.. 
+	cmake . -B build -DBUILD_VENDORED_LUA=ON # If there is an issue with libs: -DBUILD_VENDORED_MEDIA_LIBS=ON
+	make -C build
+	cd ..
 	export STRATAGUS_INCLUDE_DIR=${PWD}/stratagus/gameheaders
 	export STRATAGUS=${PWD}/stratagus/build/stratagus
 }
@@ -71,10 +71,10 @@ build_war1gus() {
 	echo "${PURPLE}Building War1gus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/war1gus
 	cd war1gus
-	mkdir build && cd build
-	cmake .. -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS && make
-	cd ../mac && ./bundle.sh
-	cp -a War1gus.app ../../Warcraft.app && cd ../..
+	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
+	make -C build
+	./mac/bundle.sh
+	mv ./mac/War1gus.app ../Warcraft.app && cd ..
 	# Optional: Get a Warcraft icon
 	curl -o Warcraft.app/Contents/Resources/war1gus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/b219394bc1718b8d2858b5977a1f4b8b_Warcraft.icns
 	
@@ -87,10 +87,10 @@ build_wargus() {
 	echo "${PURPLE}Building Wargus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/wargus
 	cd wargus
-	mkdir build && cd build
-	cmake .. -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS && make
-	cd ../mac && ./bundle.sh
-	cp -a Wargus.app ../../Warcraft\ II.app && cd ../..
+	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
+	make -C build
+	./mac/bundle.sh
+	mv ./mac/Wargus.app ../Warcraft\ II.app && cd ..
 	# Optional: Get a Warcraft II icon
 	curl -o Warcraft\ II.app/Contents/Resources/wargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/f333e393cb0e0d7dffe4c63401aa9abb_Warcraft_2.icns
 		
@@ -105,8 +105,8 @@ build_stargus() {
 	cd stargus
 	meson setup -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS_BIN=$STRATAGUS build
 	ninja -C build
-	cd mac && ./bundle.sh
-	cp -a Stargus.app ../../Starcraft.app && cd ../..
+	./mac/bundle.sh
+	mv ./mac/Stargus.app ../Starcraft.app && cd ..
 	# Optional: Get a Starcraft icon
 	curl -o Starcraft.app/Contents/Resources/stargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/f47bfeffe33195d6927476760eb66333_Starcraft.icns
 		
@@ -119,6 +119,7 @@ PS3='Which game would you like to build? '
 OPTIONS=(
 	"War1gus"
 	"Wargus"
+	"War1gus & Wargus"
 	"Stargus"
 	"All"
 	"Quit")
@@ -135,11 +136,17 @@ do
 			build_wargus
 			break
 			;;
-		"Stargus")
+		"War1gus & Wargus")
 			build_stratagus
-			build_stargus
+			build_war1gus
+			build_wargus
 			break
 			;;
+		"Stargus")
+		build_stratagus
+		build_stargus
+		break
+		;;
 		"All")
 			build_stratagus
 			build_war1gus
