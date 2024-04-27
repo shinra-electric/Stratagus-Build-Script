@@ -10,6 +10,9 @@ NC='\033[0m' # No Colour
 SCRIPT_DIR=${0:a:h}
 cd "$SCRIPT_DIR"
 
+# Detect CPU architecture
+ARCH_NAME="$(uname -m)"
+
 # Introduction
 echo "\n${PURPLE}This script is for compiling a native macOS build of:"
 echo "${GREEN}War1gus - ${PURPLE}Warcraft: Orcs and Humans${NC}"
@@ -23,40 +26,51 @@ echo "${PURPLE}The source code folder can be safely deleted after you have extra
 echo "\n${PURPLE}${GREEN}Homebrew${PURPLE} and the ${GREEN}Xcode command-line tools${PURPLE} are required to build${NC}"
 echo "${PURPLE}If they are not present you will be prompted to install them${NC}\n"
 
-
-# Build Stratagus
-build_stratagus() {
+# Check for homebrew installation
+homebrew_check() {
 	echo "${PURPLE}Checking for Homebrew...${NC}"
 	if ! command -v brew &> /dev/null; then
 		echo -e "${PURPLE}Homebrew not found. Installing Homebrew...${NC}"
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-		(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> $HOME/.zprofile
-		eval "$(/opt/homebrew/bin/brew shellenv)"
+		if [[ "${ARCH_NAME}" == "arm64" ]]; then 
+			(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> $HOME/.zprofile
+			eval "$(/opt/homebrew/bin/brew shellenv)"
+			else 
+			(echo; echo 'eval "$(/user/local/bin/brew shellenv)"') >> $HOME/.zprofile
+			eval "$(/user/local/bin/brew shellenv)"
+		fi
+		
 	else
 		echo -e "${PURPLE}Homebrew found. Updating Homebrew...${NC}"
 		brew update
 	fi
-	
-	# Install required dependencies
+}
+
+# Function for checking for an individual dependency
+single_dependency_check() {
+	if [ -d "$(brew --prefix)/opt/$1" ]; then
+		echo -e "${GREEN}Found $1. Checking for updates...${NC}"
+			brew upgrade $1
+	else
+		 echo -e "${PURPLE}Did not find $1. Installing...${NC}"
+		brew install $1
+	fi
+}
+
+# Install required dependencies
+check_all_dependencies() {
 	echo -e "${PURPLE}Checking for Homebrew dependencies...${NC}"
-	brew_dependency_check() {
-		if [ -d "$(brew --prefix)/opt/$1" ]; then
-			echo -e "${GREEN}Found $1. Checking for updates...${NC}"
-				brew upgrade $1
-		else
-			 echo -e "${PURPLE}Did not find $1. Installing...${NC}"
-			brew install $1
-		fi
-	}
-	
 	# Required Homebrew packages
 	deps=( cmake dylibbundler sdl2 sdl2_mixer sdl2_image lua libpng ffmpeg meson ninja )
 	
 	for dep in $deps[@]
 	do 
-		brew_dependency_check $dep
+		single_dependency_check $dep
 	done
-	
+}
+
+# Build Stratagus
+build_stratagus() {
 	echo "${PURPLE}Building Stratagus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/stratagus
 	cd stratagus
@@ -127,27 +141,37 @@ select opt in $OPTIONS[@]
 do
 	case $opt in
 		"War1gus")
+			homebrew_check
+			check_all_dependencies
 			build_stratagus
 			build_war1gus
 			break
 			;;
 		"Wargus")
+			homebrew_check
+			check_all_dependencies
 			build_stratagus
 			build_wargus
 			break
 			;;
 		"War1gus & Wargus")
+			homebrew_check
+			check_all_dependencies
 			build_stratagus
 			build_war1gus
 			build_wargus
 			break
 			;;
 		"Stargus")
-		build_stratagus
-		build_stargus
-		break
-		;;
+			homebrew_check
+			check_all_dependencies
+			build_stratagus
+			build_stargus
+			break
+			;;
 		"All")
+			homebrew_check
+			check_all_dependencies
 			build_stratagus
 			build_war1gus
 			build_wargus
