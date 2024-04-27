@@ -40,6 +40,12 @@ homebrew_check() {
 			eval "$(/user/local/bin/brew shellenv)"
 		fi
 		
+		# Check for errors
+		if [ $? -ne 0 ]; then
+			echo "${RED}There was an issue installing Homebrew${NC}"
+			echo "${PURPLE}Quitting script...${NC}"	
+			exit 1
+		fi
 	else
 		echo -e "${PURPLE}Homebrew found. Updating Homebrew...${NC}"
 		brew update
@@ -79,6 +85,13 @@ build_stratagus() {
 	cd ..
 	export STRATAGUS_INCLUDE_DIR=${PWD}/stratagus/gameheaders
 	export STRATAGUS=${PWD}/stratagus/build/stratagus
+	
+	# Check for errors
+	if [ $? -ne 0 ]; then
+		echo "${RED}There was an issue building Stratagus${NC}"
+		echo "${PURPLE}Quitting script...${NC}"	
+		exit 1
+	fi
 }
 
 build_war1gus() {
@@ -95,6 +108,13 @@ build_war1gus() {
 	# Bundle libs & Codesign
 	dylibbundler -of -cd -b -x ./Warcraft.app/Contents/MacOS/stratagus -d ./Warcraft.app/Contents/libs/
 	dylibbundler -of -cd -b -x ./Warcraft.app/Contents/MacOS/war1tool -d ./Warcraft.app/Contents/libs/
+	
+	# Check for errors
+	if [ $? -ne 0 ]; then
+		echo "${RED}There was an issue building War1gus${NC}"
+		echo "${PURPLE}Quitting script...${NC}"	
+		exit 1
+	fi
 }
 
 build_wargus() {
@@ -111,6 +131,13 @@ build_wargus() {
 	# Bundle libs & Codesign
 	dylibbundler -of -cd -b -x ./Warcraft\ II.app/Contents/MacOS/stratagus -d ./Warcraft\ II.app/Contents/libs/
 	dylibbundler -of -cd -b -x ./Warcraft\ II.app/Contents/MacOS/wartool -d ./Warcraft\ II.app/Contents/libs/
+	
+	# Check for errors
+	if [ $? -ne 0 ]; then
+		echo "${RED}There was an issue building Wargus${NC}"
+		echo "${PURPLE}Quitting script...${NC}"	
+		exit 1
+	fi
 }
 
 build_stargus() {
@@ -127,6 +154,13 @@ build_stargus() {
 	# Bundle libs & Codesign
 	dylibbundler -of -cd -b -x ./Starcraft.app/Contents/MacOS/stratagus -d ./Starcraft.app/Contents/libs/
 	dylibbundler -of -cd -b -x ./Starcraft.app/Contents/MacOS/startool -d ./Starcraft.app/Contents/libs/
+	
+	# Check for errors
+	if [ $? -ne 0 ]; then
+		echo "${RED}There was an issue building Stargus${NC}"
+		echo "${PURPLE}Quitting script...${NC}"	
+		exit 1
+	fi
 }
 
 PS3='Which game would you like to build? '
@@ -189,4 +223,6 @@ done
 # Cleanup
 # Note: Not removing the source dir because it is required in order for the extractor tool to work due to a bug. 
 echo "${PURPLE}Cleaning up...${NC}"
+echo "${PURPLE}Not removing the source directories because they are required in order for the extractor tool to work${NC}"
+echo "${PURPLE}After you have extracted the game data it is safe to delete the source directories${NC}"
 rm -rf stratagus
