@@ -101,6 +101,7 @@ build_war1gus() {
 	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
 	make -C build
 	./mac/bundle.sh
+	rm -rf ../Warcraft.app
 	mv ./mac/War1gus.app ../Warcraft.app && cd ..
 	# Optional: Get a Warcraft icon
 	curl -o Warcraft.app/Contents/Resources/war1gus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/b219394bc1718b8d2858b5977a1f4b8b_Warcraft.icns
@@ -124,6 +125,7 @@ build_wargus() {
 	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
 	make -C build
 	./mac/bundle.sh
+	rm -rf ../Warcraft\ II.app
 	mv ./mac/Wargus.app ../Warcraft\ II.app && cd ..
 	# Optional: Get a Warcraft II icon
 	curl -o Warcraft\ II.app/Contents/Resources/wargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/f333e393cb0e0d7dffe4c63401aa9abb_Warcraft_2.icns
@@ -147,6 +149,7 @@ build_stargus() {
 	meson setup -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS_BIN=$STRATAGUS build
 	ninja -C build
 	./mac/bundle.sh
+	rm -rf ../Starcraft.app
 	mv ./mac/Stargus.app ../Starcraft.app && cd ..
 	# Optional: Get a Starcraft icon
 	curl -o Starcraft.app/Contents/Resources/stargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/f47bfeffe33195d6927476760eb66333_Starcraft.icns
