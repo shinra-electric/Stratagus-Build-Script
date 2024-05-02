@@ -98,7 +98,10 @@ build_war1gus() {
 	echo "${PURPLE}Building War1gus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/war1gus
 	cd war1gus
-	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
+	cmake . -B build \
+			-DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR \
+			-DSTRATAGUS=$STRATAGUS \
+			-DCMAKE_FIND_FRAMEWORK=LAST
 	make -C build
 	./mac/bundle.sh
 	rm -rf ../Warcraft.app
@@ -122,7 +125,10 @@ build_wargus() {
 	echo "${PURPLE}Building Wargus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/wargus
 	cd wargus
-	cmake . -B build -DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR -DSTRATAGUS=$STRATAGUS
+	cmake . -B build \
+			-DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR \
+			-DSTRATAGUS=$STRATAGUS \
+			-DCMAKE_FIND_FRAMEWORK=LAST
 	make -C build
 	./mac/bundle.sh
 	rm -rf ../Warcraft\ II.app
