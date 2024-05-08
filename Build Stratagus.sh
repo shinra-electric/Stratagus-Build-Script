@@ -158,7 +158,7 @@ build_stargus() {
 	rm -rf ../Starcraft.app
 	mv ./mac/Stargus.app ../Starcraft.app && cd ..
 	# Optional: Get a Starcraft icon
-	curl -o Starcraft.app/Contents/Resources/stargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/f47bfeffe33195d6927476760eb66333_Starcraft.icns
+	curl -o Starcraft.app/Contents/Resources/stargus.icns https://parsefiles.back4app.com/JPaQcFfEEQ1ePBxbf6wvzkPMEqKYHhPYv8boI1Rc/19a774b8baa4ad3dd3e9e097d30d6cd9_Starcraft.icns
 		
 	# Bundle libs & Codesign
 	dylibbundler -of -cd -b -x ./Starcraft.app/Contents/MacOS/stratagus -d ./Starcraft.app/Contents/libs/
