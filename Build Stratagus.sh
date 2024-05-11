@@ -10,8 +10,9 @@ NC='\033[0m' # No Colour
 SCRIPT_DIR=${0:a:h}
 cd "$SCRIPT_DIR"
 
-# Detect CPU architecture
+# Detect CPU architecture and number of cores
 ARCH_NAME="$(uname -m)"
+CORES=$(sysctl -n hw.ncpu)
 
 # Introduction
 echo "\n${PURPLE}This script is for compiling a native macOS build of:"
@@ -81,7 +82,7 @@ build_stratagus() {
 	git clone --recurse-submodules https://github.com/Wargus/stratagus
 	cd stratagus
 	cmake . -B build -DBUILD_VENDORED_LUA=ON # If there is an issue with libs: -DBUILD_VENDORED_MEDIA_LIBS=ON
-	make -C build
+	make -C build -j$CORES
 	cd ..
 	export STRATAGUS_INCLUDE_DIR=${PWD}/stratagus/gameheaders
 	export STRATAGUS=${PWD}/stratagus/build/stratagus
@@ -102,7 +103,7 @@ build_war1gus() {
 			-DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR \
 			-DSTRATAGUS=$STRATAGUS \
 			-DCMAKE_FIND_FRAMEWORK=LAST
-	make -C build
+	make -C build -j$CORES
 	./mac/bundle.sh
 	rm -rf ../Warcraft.app
 	mv ./mac/War1gus.app ../Warcraft.app && cd ..
@@ -129,7 +130,7 @@ build_wargus() {
 			-DSTRATAGUS_INCLUDE_DIR=$STRATAGUS_INCLUDE_DIR \
 			-DSTRATAGUS=$STRATAGUS \
 			-DCMAKE_FIND_FRAMEWORK=LAST
-	make -C build
+	make -C build -j$CORES
 	./mac/bundle.sh
 	rm -rf ../Warcraft\ II.app
 	mv ./mac/Wargus.app ../Warcraft\ II.app && cd ..
