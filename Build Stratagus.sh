@@ -22,9 +22,9 @@ echo "${GREEN}Stargus - ${PURPLE}Starcraft${RED} Starcraft is currently not play
 
 echo "\n${PURPLE}The app can extract the original game data from an official GoG or BNE game installer${NC}"
 echo "\n${PURPLE}Note that due to a bug in the source code, the source folder is required when using the data extraction tool${NC}"
-echo "${PURPLE}The source code folder can be safely deleted after you have extracted the game data${NC}"
+echo "${PURPLE}The source code folder can be safely deleted after you have extracted the game data\n${NC}"
 
-echo "\n${PURPLE}${GREEN}Homebrew${PURPLE} and the ${GREEN}Xcode command-line tools${PURPLE} are required to build${NC}"
+echo "${GREEN}Homebrew${PURPLE} and the ${GREEN}Xcode command-line tools${PURPLE} are required to build${NC}"
 echo "${PURPLE}If they are not present you will be prompted to install them${NC}\n"
 
 # Check for homebrew installation
@@ -57,9 +57,9 @@ homebrew_check() {
 single_dependency_check() {
 	if [ -d "$(brew --prefix)/opt/$1" ]; then
 		echo -e "${GREEN}Found $1. Checking for updates...${NC}"
-			brew upgrade $1
+		brew upgrade $1
 	else
-		 echo -e "${PURPLE}Did not find $1. Installing...${NC}"
+		echo -e "${PURPLE}Did not find $1. Installing...${NC}"
 		brew install $1
 	fi
 }
@@ -81,7 +81,8 @@ build_stratagus() {
 	echo "${PURPLE}Building Stratagus...${NC}"
 	git clone --recurse-submodules https://github.com/Wargus/stratagus
 	cd stratagus
-	cmake . -B build -DBUILD_VENDORED_LUA=ON # If there is an issue with libs: -DBUILD_VENDORED_MEDIA_LIBS=ON
+	cmake . -B build -DBUILD_VENDORED_LUA=ON -DWITH_OPENMP=OFF 
+	# If there is an issue with libs: -DBUILD_VENDORED_MEDIA_LIBS=ON
 	make -C build -j$CORES
 	cd ..
 	export STRATAGUS_INCLUDE_DIR=${PWD}/stratagus/gameheaders
